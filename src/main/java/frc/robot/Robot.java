@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Encoder;
@@ -18,6 +20,8 @@ import edu.wpi.first.wpilibj.simulation.XboxControllerSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotGearing;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotMotor;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim.KitbotWheelSize;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -49,6 +53,11 @@ public class Robot extends TimedRobot {
     KitbotGearing.k10p71,
     KitbotWheelSize.kSixInch, 
     null);
+
+  private DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(
+    Rotation2d.fromDegrees(gyro.getAngle()), 0, 0);
+
+  private Field2d field = new Field2d();
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -111,8 +120,10 @@ public class Robot extends TimedRobot {
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {
-    leftEncoder.setDistancePerPulse(Math.PI * Units.inchesToMeters(6));
-    rightEncoder.setDistancePerPulse(Math.PI * Units.inchesToMeters(6));
+    leftEncoder.setDistancePerPulse(Math.PI * Units.inchesToMeters(6) * 10 / 71d);
+    rightEncoder.setDistancePerPulse(Math.PI * Units.inchesToMeters(6) * 10 / 71d);
+
+    SmartDashboard.putData(field);
   }
 
   /** This function is called periodically whilst in simulation. */
@@ -147,5 +158,12 @@ public class Robot extends TimedRobot {
     gyroSim.setGyroAngleZ(drivetrainSim.getHeading().getDegrees());
     controllerSim.setRawAxis(1, throttle);
     controllerSim.setRawAxis(4, twist);
+
+    odometry.update(
+      Rotation2d.fromDegrees(gyro.getAngle()), 
+      leftEncoder.getDistance(),
+      rightEncoder.getDistance());
+
+    field.setRobotPose(odometry.getPoseMeters());
   }
 }

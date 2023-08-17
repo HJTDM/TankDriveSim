@@ -10,6 +10,9 @@
         "header": {
           "open": true
         }
+      },
+      "window": {
+        "visible": true
       }
     },
     "Other Devices": {
@@ -22,12 +25,23 @@
   },
   "NTProvider": {
     "types": {
-      "/FMSInfo": "FMSInfo"
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Field": "Field2d"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
     "transitory": {
-      "Shuffleboard": {
+      "SmartDashboard": {
+        "Field": {
+          "open": true
+        },
         "open": true
       }
     }
